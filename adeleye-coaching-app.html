@@ -317,7 +317,7 @@ function sendEnquiry(){
     "%0D%0ACurrent role: "+encodeURIComponent(r||'—')+"%0D%0APreferred time: "+encodeURIComponent(t)+
     "%0D%0AReferred by: "+encodeURIComponent(ref||'—')+
     "%0D%0A%0D%0ABiggest challenge right now:%0D%0A"+encodeURIComponent(m||'—')+"%0D%0A%0D%0AThanks!";
-  location.href="mailto:nileshnis@yahoo.com?subject="+encodeURIComponent("Coaching enquiry — "+pkg)+"&body="+body;
+  location.href="mailto:nadeleye@outlook.com?subject="+encodeURIComponent("Coaching enquiry — "+pkg)+"&body="+body;
 }
 
 /* ---------- referrals ---------- */
@@ -327,7 +327,7 @@ function buildReferralMsg(){
   return (to?'Hi '+to+',':'Hi,')+
    '\n\nI thought of you when I found this. Nish Adeleye is a nurse (HDU + aged care) who does career coaching for healthcare workers — practical stuff about direction, skills and advocating for yourself, not "do more yoga" advice.'+
    '\n\nThere\'s a free 2-minute Career Clarity Quiz that\'s worth doing. If you mention '+from+' referred you, you\'ll both get a discount.'+
-   '\n\nContact: nileshnis@yahoo.com\nLinkedIn: https://www.linkedin.com/in/nileshni-adeleye-26932355\n\n— '+from;
+   '\n\nContact: nadeleye@outlook.com\nLinkedIn: https://www.linkedin.com/in/nileshni-adeleye-26932355\n\n— '+from;
 }
 function refreshReferralPreview(){document.getElementById('rmsgprev').value=buildReferralMsg()}
 document.getElementById('rname').addEventListener('input',refreshReferralPreview);
