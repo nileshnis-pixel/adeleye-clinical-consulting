@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adeleye Clinical Consulting — Coaching App</title>
+<style>
+  :root{--navy:#0f2f3d;--teal:#174a5c;--teal-l:#1f6076;--gold:#c9a55c;--gold-l:#e8c887;
+        --ink:#22333b;--mist:#f4f7f8;--line:#dde6e9;--ok:#2e7d5b;--warn:#a04b3c}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--mist);color:var(--ink);line-height:1.6}
+  .serif{font-family:Georgia,serif}
+
+  .top{background:linear-gradient(150deg,var(--navy),var(--teal));color:#fff;padding:26px 20px 0}
+  .top-inner{max-width:900px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand svg{width:52px;height:52px;flex-shrink:0}
+  .brand h1{font-size:1.25rem;letter-spacing:.02em}
+  .brand p{font-size:.85rem;color:#c3d4db}
+  .tabs{display:flex;gap:4px;margin-top:22px;flex-wrap:wrap}
+  .tab{background:rgba(255,255,255,.08);border:none;color:#cfdde3;padding:12px 22px;font-size:.95rem;
+       cursor:pointer;border-radius:8px 8px 0 0;font-family:inherit}
+  .tab.active{background:var(--mist);color:var(--navy);font-weight:600}
+
+  main{max-width:900px;margin:0 auto;padding:34px 20px 70px}
+  .panel{display:none}.panel.active{display:block}
+  h2{font-family:Georgia,serif;color:var(--navy);font-size:1.6rem;margin-bottom:8px}
+  .sub{color:#5b7078;margin-bottom:26px}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:26px;margin-bottom:18px}
+  .accent{display:inline-block;width:56px;height:4px;background:var(--gold);border-radius:2px;margin-bottom:14px}
+
+  /* quiz */
+  .q h3{color:var(--navy);margin-bottom:14px;font-size:1.08rem}
+  .opt{display:block;width:100%;text-align:left;background:var(--mist);border:1.5px solid var(--line);
+       border-radius:8px;padding:13px 16px;margin-bottom:10px;cursor:pointer;font-size:.96rem;font-family:inherit;color:var(--ink)}
+  .opt:hover{border-color:var(--gold)}
+  .progress{height:6px;background:var(--line);border-radius:3px;margin-bottom:22px;overflow:hidden}
+  .progress div{height:100%;background:var(--gold);width:0%;transition:width .3s}
+  .result-badge{background:linear-gradient(150deg,var(--navy),var(--teal));color:#fff;border-radius:10px;padding:26px;margin-bottom:18px}
+  .result-badge .kick{text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;color:var(--gold-l)}
+  .result-badge h3{font-family:Georgia,serif;font-size:1.5rem;margin:6px 0 10px}
+  .result-badge p{color:#d6e2e7;font-size:.95rem}
+  ul.next{margin:14px 0 0 18px}
+  ul.next li{margin-bottom:8px;font-size:.95rem}
+
+  /* forms */
+  label{display:block;font-size:.86rem;font-weight:600;color:var(--navy);margin:14px 0 5px}
+  input,select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:8px;
+       font-size:.95rem;font-family:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+  textarea{min-height:90px;resize:vertical}
+  .btn{background:var(--gold);color:var(--navy);border:none;padding:13px 30px;border-radius:8px;
+       font-weight:700;font-size:.95rem;cursor:pointer;margin-top:18px;font-family:inherit}
+  .btn:hover{filter:brightness(1.07)}
+  .btn.quiet{background:#fff;border:1.5px solid var(--line);color:var(--teal);font-weight:600}
+  .btn.danger{background:#fff;border:1.5px solid #e5c5bd;color:var(--warn)}
+
+  .pkg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:8px}
+  .pkg-card{border:2px solid var(--line);border-radius:10px;padding:20px;cursor:pointer;background:#fff}
+  .pkg-card.sel{border-color:var(--gold);background:#fdfaf3}
+  .pkg-card h4{color:var(--navy);margin-bottom:6px}
+  .pkg-card p{font-size:.87rem;color:#5b7078}
+
+  /* tracker */
+  .client{border:1px solid var(--line);border-radius:10px;background:#fff;padding:20px;margin-bottom:14px}
+  .client-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .client h4{color:var(--navy);font-size:1.05rem}
+  .pill{font-size:.72rem;background:var(--mist);border:1px solid var(--line);border-radius:20px;padding:3px 12px;color:var(--teal)}
+  .goal{font-size:.9rem;margin-top:6px}
+  .sessions{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+  .session{font-size:.88rem;padding:7px 0;border-bottom:1px solid var(--mist)}
+  .session b{color:var(--teal)}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:160px}
+  .mini{padding:8px 16px;font-size:.83rem;margin-top:0}
+  .note{font-size:.8rem;color:#7d939c;margin-top:16px}
+  .empty{text-align:center;color:#7d939c;padding:36px 10px;font-size:.95rem}
+  dialog{border:none;border-radius:12px;padding:28px;max-width:480px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  dialog::backdrop{background:rgba(15,47,61,.5)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <svg viewBox="0 0 800 800"><defs>
+        <linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f2f3d"/><stop offset="55%" stop-color="#1f6076"/><stop offset="100%" stop-color="#c9a55c"/></linearGradient>
+        <linearGradient id="sn" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f7e8c5"/><stop offset="100%" stop-color="#e0b96a"/></linearGradient>
+        <clipPath id="cc"><circle cx="400" cy="400" r="340"/></clipPath></defs>
+        <g clip-path="url(#cc)"><rect width="800" height="800" fill="url(#sk)"/>
+        <circle cx="400" cy="470" r="130" fill="url(#sn)"/>
+        <rect x="0" y="470" width="800" height="330" fill="#12384a"/>
+        <rect x="330" y="492" width="140" height="12" rx="6" fill="#e8c887" opacity=".8"/>
+        <rect x="345" y="522" width="110" height="10" rx="5" fill="#e8c887" opacity=".6"/>
+        <rect x="355" y="550" width="90" height="9" rx="4.5" fill="#e8c887" opacity=".45"/></g>
+        <circle cx="400" cy="400" r="340" fill="none" stroke="#c9a55c" stroke-width="10"/></svg>
+      <div style="flex:1">
+        <h1 class="serif">Adeleye Clinical Consulting</h1>
+        <p>Career coaching for healthcare professionals</p>
+      </div>
+      <a href="https://www.linkedin.com/in/nileshni-adeleye-26932355" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;text-decoration:none;padding:9px 16px;border-radius:8px;font-size:.85rem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+        Connect on LinkedIn
+      </a>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-panel="quiz">Career Clarity Quiz</button>
+      <button class="tab" data-panel="book">Book Coaching</button>
+      <button class="tab" data-panel="refer">Refer a Colleague</button>
+      <button class="tab" data-panel="track">My Clients</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ============ QUIZ ============ -->
+<section class="panel active" id="quiz">
+  <h2>Career Clarity Quiz</h2>
+  <p class="sub">Eight quick questions. Find the healthcare career direction that fits how you actually work — then decide your next move.</p>
+  <div class="progress"><div id="qbar"></div></div>
+  <div class="card q" id="qbox"></div>
+</section>
+
+<!-- ============ BOOKING ============ -->
+<section class="panel" id="book">
+  <h2>Book a Coaching Conversation</h2>
+  <p class="sub">Choose what suits you, tell me a little about where you're at, and the enquiry comes straight to Nish.</p>
+  <div class="pkg" id="pkgs">
+    <div class="pkg-card sel" data-pkg="Career Clarity Session (single)">
+      <h4>Career Clarity Session</h4><p>A single 60-minute session to untangle where you are and name where you want to go.</p>
+    </div>
+    <div class="pkg-card" data-pkg="Career Strategy Package (3 sessions)">
+      <h4>Career Strategy Package</h4><p>Three sessions: clarity, skills plan, and preparing to advocate for yourself.</p>
+    </div>
+    <div class="pkg-card" data-pkg="Ongoing Coaching (monthly)">
+      <h4>Ongoing Coaching</h4><p>Monthly sessions for sustained momentum through applications, interviews and change.</p>
+    </div>
+  </div>
+  <div class="card">
+    <label for="bname">Your name</label><input id="bname" placeholder="e.g. Sarah T">
+    <label for="brole">Current role</label><input id="brole" placeholder="e.g. RN, aged care, 6 years">
+    <div class="row">
+      <div><label for="btime">Preferred time</label>
+      <select id="btime"><option>Weekday evening</option><option>Weekend</option><option>Weekday daytime</option><option>Flexible</option></select></div>
+      <div><label for="bref">Referred by (optional)</label><input id="bref" placeholder="Who told you about Nish?"></div>
+    </div>
+    <label for="bmsg">What's the biggest challenge at work right now?</label>
+    <textarea id="bmsg" placeholder="A sentence or two is plenty."></textarea>
+    <button class="btn" onclick="sendEnquiry()">Send enquiry</button>
+    <p class="note">This opens your email app with everything pre-filled — nothing is sent until you press send.</p>
+  </div>
+</section>
+
+<!-- ============ REFERRALS ============ -->
+<section class="panel" id="refer">
+  <h2>Refer a Colleague</h2>
+  <p class="sub">Know a nurse or healthcare worker who's burning out or stuck? Send them this — it takes 30 seconds and might change their year.</p>
+  <div class="card">
+    <span class="accent"></span>
+    <label for="rname">Your name (so they know who it's from — and Nish knows who to thank)</label>
+    <input id="rname" placeholder="Your name">
+    <label for="rcol">Colleague's name (optional)</label>
+    <input id="rcol" placeholder="Their name">
+    <label for="rmsgprev">The message they'll get</label>
+    <textarea id="rmsgprev" style="min-height:150px"></textarea>
+    <div class="row">
+      <button class="btn" onclick="referByEmail()">Send by email</button>
+      <button class="btn quiet" onclick="copyReferral()">Copy message (for SMS / WhatsApp)</button>
+    </div>
+    <p class="note" id="copynote"></p>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--navy);font-size:1.05rem;margin-bottom:8px">Why refer?</h3>
+    <p style="font-size:.93rem">Every referral is personally acknowledged. If someone you refer books a package, you both receive a discount on your next session — because good careers, like good wards, are built on people looking out for each other.</p>
+  </div>
+</section>
+
+<!-- ============ TRACKER ============ -->
+<section class="panel" id="track">
+  <h2>Client Tracker</h2>
+  <p class="sub">Private to this device. Track coaching clients, their goals, session notes — and who referred them.</p>
+  <div class="card">
+    <span class="accent"></span>
+    <div class="row">
+      <div><label for="cname">Client name</label><input id="cname" placeholder="Name or initials"></div>
+      <div><label for="cstage">Stage</label>
+        <select id="cstage"><option>Enquiry</option><option>Active</option><option>Paused</option><option>Completed</option></select></div>
+    </div>
+    <label for="cgoal">Career goal</label><input id="cgoal" placeholder="e.g. Move into nurse education within 12 months">
+    <label for="cref">Referred by (optional)</label><input id="cref" placeholder="Track where clients come from">
+    <button class="btn" onclick="addClient()">Add client</button>
+    <p class="note">Confidentiality reminder: record coaching goals only — never include patient information or clinical records in this tool.</p>
+  </div>
+  <div id="clients"></div>
+</section>
+
+</main>
+
+<dialog id="sessionDlg">
+  <h2 style="font-size:1.2rem">Add session note</h2>
+  <label for="sdate">Date</label><input type="date" id="sdate">
+  <label for="snote">What was covered / agreed next steps</label><textarea id="snote"></textarea>
+  <div class="row" style="margin-top:16px">
+    <button class="btn mini" onclick="saveSession()">Save</button>
+    <button class="btn quiet mini" onclick="document.getElementById('sessionDlg').close()">Cancel</button>
+  </div>
+</dialog>
+
+<script>
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById(t.dataset.panel).classList.add('active');
+}));
+
+/* ---------- quiz ---------- */
+const QS=[
+ {q:"At the end of a good shift, what made it good?",o:[
+  ["I handled something clinically complex well","clinical"],
+  ["The whole team ran smoothly because of how I organised things","lead"],
+  ["I helped a junior colleague finally 'get' something","edu"],
+  ["I made a resident's or patient's whole day better, not just their obs","person"]]},
+ {q:"Which frustration hits you hardest?",o:[
+  ["Not being stretched clinically anymore","clinical"],
+  ["Watching poor decisions from management I could do better","lead"],
+  ["Seeing new staff thrown in with no proper support","edu"],
+  ["Care becoming task-lists instead of people","person"]]},
+ {q:"Given a free study day, you'd pick:",o:[
+  ["An advanced clinical skills workshop","clinical"],
+  ["A leadership or roster/finance masterclass","lead"],
+  ["A teaching and assessment course","edu"],
+  ["A dementia care or person-centred care deep-dive","person"]]},
+ {q:"Colleagues would say your superpower is:",o:[
+  ["Staying sharp when a patient deteriorates","clinical"],
+  ["Making chaos organised","lead"],
+  ["Explaining things so they stick","edu"],
+  ["Noticing what others miss about people","person"]]},
+ {q:"In five years you'd love your title to sound like:",o:[
+  ["Clinical Nurse Consultant / specialist","clinical"],
+  ["Nurse Unit Manager / Director","lead"],
+  ["Nurse Educator / Facilitator","edu"],
+  ["Care Manager / Community & aged care leader","person"]]},
+ {q:"Your relationship with paperwork:",o:[
+  ["Fine if it's clinical documentation that matters","clinical"],
+  ["I actually like systems, audits and rosters","lead"],
+  ["I enjoy writing resources others will use","edu"],
+  ["Necessary — but people come first","person"]]},
+ {q:"What would make you stay in your current job?",o:[
+  ["A clear pathway to advanced practice","clinical"],
+  ["Real influence over how the unit runs","lead"],
+  ["A dedicated education role","edu"],
+  ["More time for the human side of care","person"]]},
+ {q:"Honestly, the next 12 months should be about:",o:[
+  ["Getting credentialed and specialising","clinical"],
+  ["Stepping up into coordination or management","lead"],
+  ["Building teaching experience","edu"],
+  ["Finding a role that matches my values again","person"]]}];
+
+const RESULTS={
+ clinical:{t:"Clinical Specialisation",d:"You're energised by clinical depth. Your path likely runs through advanced practice — think HDU/ICU, wound care, palliative or another specialty that stretches you.",
+  n:["Shortlist 2–3 specialties and talk to someone working in each","Look at postgraduate certificate options (many are part-time friendly)","Ask your NUM about acting in senior clinical roles"]},
+ lead:{t:"Leadership & Management",d:"You see the system, not just the shift. Coordination, unit management and beyond is where your organising brain pays off — and healthcare desperately needs good leaders.",
+  n:["Volunteer for portfolio work: rosters, audits, quality projects","Ask to act up when your NUM or coordinator is on leave","Explore a leadership short course before committing to a full postgrad"]},
+ edu:{t:"Education & Teaching",d:"You multiply your impact through others. Preceptorship, facilitation and nurse education let you fix the 'thrown in the deep end' problem for the next generation.",
+  n:["Take every preceptor/buddy opportunity and document it","Ask to run a short in-service on something you know well","Look into Cert IV TAE or grad cert in clinical education"]},
+ person:{t:"Person-Centred & Community Care",d:"Your compass points to the human side of care — aged care leadership, community health, dementia care or care management, where relationships are the work, not the interruption.",
+  n:["Explore care manager and community roles — they value exactly your strengths","Consider dementia or palliative care credentials","Protect your values: name them before your next role move"]}};
+
+let qi=0,score={clinical:0,lead:0,edu:0,person:0};
+function renderQ(){
+  const box=document.getElementById('qbox');
+  document.getElementById('qbar').style.width=(qi/QS.length*100)+'%';
+  if(qi>=QS.length){return renderResult()}
+  const item=QS[qi];
+  box.innerHTML='<h3>'+(qi+1)+' of '+QS.length+' — '+item.q+'</h3>'+
+    item.o.map(o=>'<button class="opt" onclick="pick(\''+o[1]+'\')">'+o[0]+'</button>').join('');
+}
+function pick(k){score[k]++;qi++;renderQ()}
+function renderResult(){
+  document.getElementById('qbar').style.width='100%';
+  const best=Object.keys(score).sort((a,b)=>score[b]-score[a])[0];
+  const r=RESULTS[best];
+  document.getElementById('qbox').innerHTML=
+   '<div class="result-badge"><span class="kick">Your direction</span><h3>'+r.t+'</h3><p>'+r.d+'</p></div>'+
+   '<h3 style="color:var(--navy)">Suggested next steps</h3><ul class="next">'+r.n.map(x=>'<li>'+x+'</li>').join('')+'</ul>'+
+   '<p class="note">This quiz is a conversation starter, not a formal career assessment — the real work happens when we map it to your life and goals.</p>'+
+   '<button class="btn" onclick="goBook()">Book a clarity session</button> '+
+   '<button class="btn quiet" onclick="goRefer()">Share with a colleague</button> '+
+   '<button class="btn quiet" onclick="restart()">Retake quiz</button>';
+}
+function restart(){qi=0;score={clinical:0,lead:0,edu:0,person:0};renderQ()}
+function goBook(){document.querySelector('[data-panel=book]').click()}
+function goRefer(){document.querySelector('[data-panel=refer]').click()}
+renderQ();
+
+/* ---------- booking ---------- */
+let pkg="Career Clarity Session (single)";
+document.querySelectorAll('.pkg-card').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.pkg-card').forEach(x=>x.classList.remove('sel'));
+  c.classList.add('sel');pkg=c.dataset.pkg;
+}));
+function sendEnquiry(){
+  const n=document.getElementById('bname').value.trim(),
+        r=document.getElementById('brole').value.trim(),
+        t=document.getElementById('btime').value,
+        ref=document.getElementById('bref').value.trim(),
+        m=document.getElementById('bmsg').value.trim();
+  if(!n){alert('Please add your name so Nish knows who to reply to.');return}
+  const body="Hi Nish,%0D%0A%0D%0AI'd like to enquire about coaching.%0D%0A%0D%0A"+
+    "Package: "+encodeURIComponent(pkg)+"%0D%0AName: "+encodeURIComponent(n)+
+    "%0D%0ACurrent role: "+encodeURIComponent(r||'—')+"%0D%0APreferred time: "+encodeURIComponent(t)+
+    "%0D%0AReferred by: "+encodeURIComponent(ref||'—')+
+    "%0D%0A%0D%0ABiggest challenge right now:%0D%0A"+encodeURIComponent(m||'—')+"%0D%0A%0D%0AThanks!";
+  location.href="mailto:nileshnis@yahoo.com?subject="+encodeURIComponent("Coaching enquiry — "+pkg)+"&body="+body;
+}
+
+/* ---------- referrals ---------- */
+function buildReferralMsg(){
+  const from=document.getElementById('rname').value.trim()||'A colleague',
+        to=document.getElementById('rcol').value.trim();
+  return (to?'Hi '+to+',':'Hi,')+
+   '\n\nI thought of you when I found this. Nish Adeleye is a nurse (HDU + aged care) who does career coaching for healthcare workers — practical stuff about direction, skills and advocating for yourself, not "do more yoga" advice.'+
+   '\n\nThere\'s a free 2-minute Career Clarity Quiz that\'s worth doing. If you mention '+from+' referred you, you\'ll both get a discount.'+
+   '\n\nContact: nileshnis@yahoo.com\nLinkedIn: https://www.linkedin.com/in/nileshni-adeleye-26932355\n\n— '+from;
+}
+function refreshReferralPreview(){document.getElementById('rmsgprev').value=buildReferralMsg()}
+document.getElementById('rname').addEventListener('input',refreshReferralPreview);
+document.getElementById('rcol').addEventListener('input',refreshReferralPreview);
+refreshReferralPreview();
+function referByEmail(){
+  const msg=document.getElementById('rmsgprev').value;
+  location.href='mailto:?subject='+encodeURIComponent('Thought this might help — career coaching for healthcare workers')+
+    '&body='+encodeURIComponent(msg);
+}
+function copyReferral(){
+  const msg=document.getElementById('rmsgprev').value;
+  navigator.clipboard.writeText(msg).then(()=>{
+    document.getElementById('copynote').textContent='Copied! Paste it into SMS, WhatsApp or Messenger.';
+  }).catch(()=>{
+    document.getElementById('copynote').textContent='Copy failed — select the message above and copy it manually.';
+  });
+}
+
+/* ---------- tracker ---------- */
+let clients=[];try{clients=JSON.parse(localStorage.getItem('acc_clients')||'[]')}catch(e){clients=[]}
+let dlgTarget=null;
+function persist(){try{localStorage.setItem('acc_clients',JSON.stringify(clients))}catch(e){}}
+function addClient(){
+  const n=document.getElementById('cname').value.trim(),
+        g=document.getElementById('cgoal').value.trim(),
+        s=document.getElementById('cstage').value,
+        rf=document.getElementById('cref').value.trim();
+  if(!n){alert('Client name is required.');return}
+  clients.unshift({id:Date.now(),name:n,goal:g,stage:s,referredBy:rf,sessions:[]});
+  document.getElementById('cname').value='';document.getElementById('cgoal').value='';document.getElementById('cref').value='';
+  persist();renderClients();
+}
+function renderClients(){
+  const el=document.getElementById('clients');
+  if(!clients.length){el.innerHTML='<div class="empty">No clients yet — add your first above.</div>';return}
+  el.innerHTML=clients.map(c=>
+   '<div class="client"><div class="client-head"><div><h4>'+esc(c.name)+' <span class="pill">'+esc(c.stage)+'</span>'+
+   (c.referredBy?' <span class="pill" style="color:var(--ok)">Referred by '+esc(c.referredBy)+'</span>':'')+'</h4>'+
+   (c.goal?'<p class="goal">Goal: '+esc(c.goal)+'</p>':'')+'</div>'+
+   '<div class="row" style="flex:0"><button class="btn quiet mini" onclick="openSession('+c.id+')">+ Session</button>'+
+   '<button class="btn quiet mini" onclick="cycleStage('+c.id+')">Stage</button>'+
+   '<button class="btn danger mini" onclick="delClient('+c.id+')">Delete</button></div></div>'+
+   (c.sessions.length?'<div class="sessions">'+c.sessions.map(s=>'<div class="session"><b>'+esc(s.d)+'</b> — '+esc(s.n)+'</div>').join('')+'</div>':'')+
+   '</div>').join('');
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function openSession(id){dlgTarget=id;
+  document.getElementById('sdate').value=new Date().toISOString().slice(0,10);
+  document.getElementById('snote').value='';
+  document.getElementById('sessionDlg').showModal();}
+function saveSession(){
+  const c=clients.find(x=>x.id===dlgTarget);if(!c)return;
+  const d=document.getElementById('sdate').value,n=document.getElementById('snote').value.trim();
+  if(!n){alert('Add a short note first.');return}
+  c.sessions.unshift({d:d,n:n});persist();renderClients();
+  document.getElementById('sessionDlg').close();
+}
+function cycleStage(id){
+  const order=['Enquiry','Active','Paused','Completed'];
+  const c=clients.find(x=>x.id===id);
+  c.stage=order[(order.indexOf(c.stage)+1)%order.length];persist();renderClients();
+}
+function delClient(id){
+  if(!confirm('Delete this client and all session notes?'))return;
+  clients=clients.filter(x=>x.id!==id);persist();renderClients();
+}
+renderClients();
+</script>
+</body>
+</html>
